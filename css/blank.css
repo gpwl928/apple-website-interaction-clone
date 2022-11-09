@@ -27,11 +27,22 @@ a {
 }
 
 .global-nav {
+  /* scroll-height 계산을 쉽게 하기 위해 nav를 공간차지 안하게 함 */
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
   height: 44px;
   padding: 0 1rem;
 }
 
 .local-nav {
+  /* scroll-height 계산을 쉽게 하기 위해 nav를 공간차지 안하게 함 */
+  position: absolute;
+  /* global-nav의 높이가 44px이니깐 top은 45px */
+  top: 45px; 
+  left: 0;
+  width: 100%;
   height: 52px;
   padding: 0 1rem;
   border-bottom: 1px solid #ddd;
@@ -77,6 +88,7 @@ a {
   justify-content: center;
   height: 3em;
   font-size: 2.5rem;
+  opacity: 0;
 }
 
 .main-message p {
