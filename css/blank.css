@@ -75,6 +75,7 @@ a {
 .scroll-section {
   position: relative;
   padding-top: 50vh;
+  border: 10px solid pink;
 }
 
 #scroll-section-0 h1 {
@@ -86,6 +87,8 @@ a {
   display: flex;
   align-items: center;
   justify-content: center;
+  top: 35vh;
+  margin: 5px 0;
   height: 3em;
   font-size: 2.5rem;
   opacity: 0;
@@ -122,8 +125,8 @@ a {
   font-size: 3.5rem;
 }
 
-.desc-message {
-  width: 50%;
+.sticky-elem.desc-message {
+  width: 45%;
   font-weight: bold;
 }
 
@@ -131,6 +134,16 @@ a {
   width: 1px;
   height: 100px;
   background-color: var(--color-text-black);
+}
+
+#scroll-section-2 .b {
+  top: 10%;
+  left: 40%;
+}
+
+#scroll-section-2 .c {
+  top: 10%;
+  left: 40%;
 }
 
 .mid-message {
@@ -166,7 +179,6 @@ a {
 .sticky-elem {
   display: none;
   position: fixed;
-  top: 0;
   left: 0;
   width: 100%;
 }
