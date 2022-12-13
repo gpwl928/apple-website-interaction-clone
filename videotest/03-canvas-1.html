@@ -24,11 +24,16 @@
 	</style>
 </head>
 <body class="before-load">
+	<!-- 애플에서 사용하는 방식 : canvas -->
 	<canvas class="sample-canvas" width="1920" height="1080"></canvas>
 
 	<script>
+		// canvas에서 모든 드로잉 조작을 할 때, canvas.getContext가 리턴해주는 객체를 이용해 그림을 그림
+		// 아래 두줄은 기본적인 요소 : canvas가져오고 context객체를 이용해서 그리고
+		// youtube 1분코딩 캔버스 검색하면 관련 영상 나옴
 		const canvas = document.querySelector('.sample-canvas');
 		const context = canvas.getContext('2d');
+
 		const videoImages = [];
 		let totalImagesCount = 960;
 		let progress;
@@ -52,6 +57,7 @@
 				if (progress > 1) progress = 1;
 
 				currentFrame = Math.round((totalImagesCount - 1) * progress);
+				//drawImage(내가 그릴 이미지 객체, x좌표, y좌표)
 				context.drawImage(videoImages[currentFrame], 0, 0);
 			});
 		}

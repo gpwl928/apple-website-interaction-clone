@@ -34,6 +34,7 @@ a {
   width: 100%;
   height: 44px;
   padding: 0 1rem;
+  z-index: 10;
 }
 
 .local-nav {
@@ -46,6 +47,7 @@ a {
   height: 52px;
   padding: 0 1rem;
   border-bottom: 1px solid #ddd;
+  z-index: 11;
 }
 
 .global-nav-links,
@@ -75,12 +77,15 @@ a {
 .scroll-section {
   position: relative;
   padding-top: 50vh;
-  border: 10px solid pink;
 }
 
 #scroll-section-0 h1 {
+  /* position 속성이 들어가야 z-index사용가능 */
+  position: relative;
+  top: -10vh;
   font-size: 4rem;
   text-align: center;
+  z-index: 5;
 }
 
 .main-message {
@@ -181,6 +186,28 @@ a {
   position: fixed;
   left: 0;
   width: 100%;
+}
+
+.sticky-elem-canvas {
+  top: 0;
+  height: 100%;
+}
+
+.sticky-elem-canvas canvas {
+  position: absolute;
+  /* top과 left를 각각 50%씩 밀고 다시 transform translate를 통해 -50%를 하면 가운데 정렬이 된다 */
+  top: 50%;
+  left: 50%;
+}
+
+.image-blend-canvas {
+  background: tomato;
+}
+
+#scroll-section-3 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 body#show-scene-0 #scroll-section-0 .sticky-elem,body#show-scene-1 #scroll-section-1 .sticky-elem,body#show-scene-2 #scroll-section-2 .sticky-elem,body#show-scene-3 #scroll-section-3 .sticky-elem {

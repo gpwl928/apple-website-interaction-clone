@@ -24,12 +24,14 @@
 	</style>
 </head>
 <body class="before-load">
-	<video class="sample-video" src="../video/sample-low.mp4" muted></video>
-	<!-- <video class="sample-video" src="../video/sample-high.mp4" muted></video> -->
+	<!-- 비디오를 직접처리하게 되면 비디오 해상도가 조그만 크더라도 버벅이게 됨 -->
+	<!-- <video class="sample-video" src="../video/sample-low.mp4" muted></video> -->
+	<video class="sample-video" src="../video/sample-high.mp4" muted></video>
 
 	<script>
 		const videoElem = document.querySelector('.sample-video');
-		let progress;
+		// loadeddata 비디오가 로드 되기를 기다리는 이벤트
+		let progress; // 현재 얼만큼 스크롤 됐는지에 관한 비율
 		let currentFrame;
 		function init() {
 			document.body.classList.remove('before-load');
@@ -37,9 +39,12 @@
 			window.addEventListener('scroll', function () {
 				progress = pageYOffset / (document.body.offsetHeight - window.innerHeight);
 				console.log(progress);
+				// 안전장치
 				if (progress < 0) progress = 0;
 				if (progress > 1) progress = 1;
 
+				// videoElem.duration 비디오 전체의 재생시간
+				// currentTime 현재 재생해야하는 비디오 시간
 				videoElem.currentTime = videoElem.duration * progress;
 			});
 		}

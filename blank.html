@@ -31,6 +31,10 @@
 		<!-- 2.스크롤 애니메이션 -->
 		<section class="scroll-section" id="scroll-section-0">
 			<h1>AirMug Pro</h1>
+			<div class="sticky-elem sticky-elem-canvas">
+				<!-- canvas에서 width와 height를 스크립트로 조절하는 것보다 canvas의 width,height는 고정으로 두고 css transform을 통해 scale을 바꾸는 것(애플에서도 사용)이 더 도움(성능, 구현면에서)된다 -->
+				<canvas id="video-canvas-0" width="1920" height="1080"></canvas>
+			</div>
 			<!-- 감싸는 컨테이너가 하나 있으면 위치 잡을 때 편함 && 텍스트가 한 줄이던 두 줄이던 가운데 정렬을 쉽게하기 위해 컨테이너 만듦 -->
 			<div class="sticky-elem main-message a">
 				<p>온전히 빠져들게 하는<br>최고급 세라믹</p>
@@ -53,6 +57,10 @@
 
 		<!-- 4. 비디오 + 텍스트 -->
 		<section class="scroll-section" id="scroll-section-2">
+			<div class="sticky-elem sticky-elem-canvas">
+				<!-- canvas에서 width와 height를 스크립트로 조절하는 것보다 canvas의 width,height는 고정으로 두고 css transform을 통해 scale을 바꾸는 것(애플에서도 사용)이 더 도움(성능, 구현면에서)된다 -->
+				<canvas id="video-canvas-1" width="1920" height="1080"></canvas>
+			</div>
 			<div class="sticky-elem main-message a">
 				<p>
 					<small>편안한 촉감</small>
@@ -82,6 +90,7 @@
 				아이디어를 광활하게 펼칠<br>
 				아름답고 부드러운 음료 공간.
 			</p>
+			<canvas class="image-blend-canvas" width="1920" height="1080"></canvas>
 			<p class="canvas-caption">
 				Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque optio sapiente suscipit, architecto fuga iure odit totam quo porro dolorem placeat tempore nesciunt officia sint labore autem perferendis, eveniet obcaecati, quasi voluptatum. Sunt dolor repudiandae eveniet temporibus architecto unde iusto ex dolore expedita illo, ducimus eos ullam ipsam, porro animi itaque! Autem cumque voluptas debitis adipisci alias necessitatibus quia placeat. Ipsum omnis reiciendis unde tenetur necessitatibus voluptatibus pariatur at architecto ducimus aperiam aliquid tempore aspernatur sint quam nobis, eos assumenda molestias adipisci incidunt praesentium possimus sed asperiores. Deleniti dolores voluptatibus blanditiis nam recusandae perferendis, modi incidunt, voluptas voluptates cupiditate necessitatibus architecto eos vel nesciunt mollitia quaerat odit praesentium magnam cumque at laudantium et harum possimus. Sunt illo possimus, libero a, odio incidunt ea tempora tenetur, iusto dolor fuga aliquid exercitationem vel? Quasi cum est esse molestiae eos at, vel veritatis necessitatibus accusantium facilis cupiditate commodi similique ab asperiores in quae?
 			</p>
