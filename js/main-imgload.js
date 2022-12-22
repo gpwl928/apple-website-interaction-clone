@@ -134,6 +134,7 @@
 
 	// Scene 0 이미지 로드
 	function loadImagesOfScene0() {
+		// 로드를 반복하지 않도록 코드 작성
 		if (sceneInfo[0].finishedLoadingImages) return;
 
 		let numberOfLoadedImages = 0;
@@ -141,6 +142,8 @@
 			let imgElem = new Image();
 			imgElem.src = `./video/001/IMG_${6726 + i}.JPG`;
 			imgElem.addEventListener('load', () => {
+				// img의 로드 순서가 꼭 요청한 순서대로 되진 않음. 이미지의 크기나 로드 환경에 따라 1번 이미지가 3번째에 로드 될 수 있음
+				// 그렇기 때문에 scene0Images의 배열을 재정렬하는 것이 필요함.
 				scene0Images.push(imgElem);
 				numberOfLoadedImages++;
 
@@ -154,6 +157,7 @@
 					setImagesOfScene0();
 					initAfterLoadImages();
 
+					// 섹션 0에서 새로고침 한 경우, 섹션2번 이미지 로드
 					if (!sceneInfo[2].finishedLoadingImages) {
 						loadImagesOfScene2();
 					}
@@ -184,6 +188,7 @@
 					setImagesOfScene2();
 					initAfterLoadImages();
 
+					// 섹션 2에서 새로고침 한 경우, 섹션0번 이미지 로드
 					if (!sceneInfo[0].finishedLoadingImages) {
 						loadImagesOfScene0();
 					}
@@ -192,6 +197,7 @@
 		}
 	}
 
+	// 이미지 번호 값 리턴
 	function getImageNumber(str) {
 		const newStr = str.substring(
 			str.lastIndexOf("_") + 1, 
@@ -200,7 +206,7 @@
 		return newStr * 1;
 	}
 
-	// 이미지가 로드되는 순서는 이미지 번호 순으로 보장이 안되기 때문에 정렬 함수로 번호순 정렬이 필요
+	// 이미지가 로드되는 순서는 이미지 번호 순으로 보장이 안되기 때문에 정렬 함수로 번호순 정렬이 필요 (버블 정렬)
 	function sortImages(imageArray) {
 		let temp;
 		let imageNumber1;
@@ -654,13 +660,15 @@
 		}
 	}
 
+	// load이벤트 대신에 DOMContentLoaded 이벤트 사용
+	// DOMContentLoaded는 이미지와 같은 자원이 다 로드되지 않아도 html 구조(= DOM 구조)만 세팅이 되면 바로 실행되는 함수 / 실행되는 시간이 더 빠르다.
 	window.addEventListener('DOMContentLoaded', () => {
 		console.log('DOMContentLoaded!');
 		setLayout(); // 중간에 새로고침 시, 콘텐츠 양에 따라 높이 계산에 오차가 발생하는 경우를 방지하기 위해 before-load 클래스 제거 전에도 확실하게 높이를 세팅하도록 한번 더 실행
         document.body.classList.remove('before-load');
         setLayout();
 
-		// Scene 3 이미지블렌드 캔버스에 쓰는 이미지 세팅
+		// Scene 3 이미지블렌드 캔버스에 쓰는 이미지 세팅 (이미지가 두개밖에 없으니깐 먼저 세팅)
 		let imgElem;
 		for (let i = 0; i < sceneInfo[3].objs.imagesPath.length; i++) {
 			imgElem = new Image();

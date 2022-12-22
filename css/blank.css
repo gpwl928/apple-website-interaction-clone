@@ -26,6 +26,68 @@ a {
   text-decoration: none;
 }
 
+body.before-load {
+  overflow: hidden;
+}
+
+.before-load .container {
+  display: none;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 100;
+  background: white;
+  opacity: 0;
+  transition: 0.5s;
+}
+
+.before-load .loading {
+  opacity: 1;
+}
+
+@keyframes loading-spin {
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes loading-circle-ani {
+  0% { stroke-dashoffset: 157; }
+  75% { stroke-dashoffset: -147; }
+  100% { stroke-dashoffset: -157; }
+}
+
+/* svg는 바깥의 뷰박스의 설정에 따라서 절대크기 자체가 변할 수 있음 => 그래서 단위를 정하지 않음 */
+.loading-circle {
+  /* 높이와 넓이가 54인 이유는 원의 크기가 50이고 stroke의 넓이가 4이기 때문 */
+  width: 54px;
+  height: 54px;
+  animation: loading-spin 3s infinite;
+}
+
+.loading-circle circle {
+  stroke: black;
+  stroke-width: 4;
+  /* 원의 둘레는 document.querySelector('.loading-circle circle').getTotalLength()로 가져올 수 있다 */
+  stroke-dasharray: 157;
+  stroke-dashoffset: 0;
+  /* 자동실행 되어야 하기 때문에 transition말고 animation을 사용할 것임  */
+  /* 아예 안 들어 갈 경우 'fill: none;'으로 해도 됨 */
+  fill: transparent;
+  animation: loading-circle-ani 1s infinite;
+}
+
+.container {
+  /* 아이폰에서 가로 스크롤 방지 */
+  overflow-x: hidden;
+}
+
 .global-nav {
   /* scroll-height 계산을 쉽게 하기 위해 nav를 공간차지 안하게 함 */
   position: absolute;
@@ -48,6 +110,17 @@ a {
   padding: 0 1rem;
   border-bottom: 1px solid #ddd;
   z-index: 11;
+}
+
+.local-nav-sticky .local-nav {
+  position: fixed;
+  top: 0;
+  background: rgba(255, 255, 255, 0.1);
+  /* saturate : 채도효과 */
+  -webkit-backdrop-filter: saturate(180%) blur(15px);
+  -moz-backdrop-filter: saturate(180%) blur(15px);
+  -o-backdrop-filter: saturate(180%) blur(15px);
+  backdrop-filter: saturate(180%) blur(15px);
 }
 
 .global-nav-links,
@@ -133,6 +206,7 @@ a {
 .sticky-elem.desc-message {
   width: 45%;
   font-weight: bold;
+  opacity: 0;
 }
 
 .pin {
@@ -165,7 +239,7 @@ a {
 
 .canvas-caption {
   padding: 0 1rem;
-  margin: -8em auto;
+  margin: -24rem auto 0;
   max-width: 1000px;
   color: var(--color-text-gray);
   font-size: 1.2rem;
@@ -180,7 +254,6 @@ a {
   background-color: darkorange;
 }
 
-
 .sticky-elem {
   display: none;
   position: fixed;
@@ -188,13 +261,17 @@ a {
   width: 100%;
 }
 
-/* #show-scene-0 #scroll-section-0 .sticky-elem,
+#show-scene-0 #scroll-section-0 .sticky-elem,
 #show-scene-1 #scroll-section-1 .sticky-elem,
 #show-scene-2 #scroll-section-2 .sticky-elem,
 #show-scene-3 #scroll-section-3 .sticky-elem {
 	display: block;
 	will-change: transform, opacity;
-} */
+}
+
+.scroll-effect-end .sticky-elem{
+  display: none !important;
+}
 
 .sticky-elem-canvas {
   top: 0;
@@ -223,9 +300,14 @@ a {
   top: 0;
 }
 
-body#show-scene-0 #scroll-section-0 .sticky-elem,body#show-scene-1 #scroll-section-1 .sticky-elem,body#show-scene-2 #scroll-section-2 .sticky-elem,body#show-scene-3 #scroll-section-3 .sticky-elem {
-  display: block;
+.normal-content {
+  margin-bottom: 10rem;
 }
+
+/* 섹션 2의 캔버스 첫 이미지가 살짝 보이길래 opacity: 0코드 추가함 */
+/* #video-canvas-1 {
+  opacity: 0;
+} */
 
 @media (min-width: 1024px) {
   #scroll-section-0 h1 {

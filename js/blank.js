@@ -6,6 +6,10 @@
   let prevScrollHeight = 0; // 현재 스크롤 위치(yOffset)보다 이전에 위치한 스크롤 섹션들의 스크롤 높이값의 합
   let currentScene = 0; // 현재 활성화된 씬(scroll-section)
   let enterNewScene = false; // 새로운 scene이 시작되는 순간 true
+  let acc = 0.1; // 가속도
+  let delayedYOffset = 0;
+  let rafId; // requestAnimationFrame Id
+  let rafState;  // requestAnimationFrame State
 
 const sceneInfo = [
   {
@@ -29,8 +33,8 @@ const sceneInfo = [
       // 비디오 이미지 개수
       videoImageCount: 300,
       // 이미지 순서 [초깃값, 최종값]
-      imageSequence: [0 ,299],
-      canvas_opacity: [1, 0, { start: 0.9, end: 1}],
+      imageSequence: [0, 299],
+      canvas_opacity: [1, 0, { start: 0.9, end: 1 }],
       // start & end = 애니메이션이 재생되는 구간 (비율로 나타냄)
       messageA_opacity_in: [0, 1, { start: 0.1, end: 0.2 }],
       messageB_opacity_in: [0, 1, { start: 0.3, end: 0.4 }],
@@ -80,9 +84,9 @@ const sceneInfo = [
         // 비디오 이미지 개수
         videoImageCount: 960,
         // 이미지 순서 [초깃값, 최종값]
-        imageSequence: [0 ,959],
-        canvas_opacity_in: [0, 1, { start: 0, end: 0.1}],
-        canvas_opacity_out: [1, 0, { start: 0.95, end: 1}],
+        imageSequence: [0, 959],
+        canvas_opacity_in: [0, 1, { start: 0, end: 0.1 }],
+        canvas_opacity_out: [1, 0, { start: 0.95, end: 1 }],
         messageA_translateY_in: [20, 0, { start: 0.15, end: 0.2 }],
         messageB_translateY_in: [30, 0, { start: 0.5, end: 0.55 }],
         messageC_translateY_in: [30, 0, { start: 0.72, end: 0.77 }],
@@ -162,13 +166,22 @@ function setCanvasImages() {
   }
 }
 
-function setLayout () {
+function checkMenu() {
+  // yOffset = window.pageYOffset 현재 스크롤된 위치
+  if (yOffset > 44) {
+    document.body.classList.add('local-nav-sticky');
+  } else {
+    document.body.classList.remove('local-nav-sticky');
+  }
+}
+
+function setLayout() {
   // 각 스크롤 섹션의 높이 세팅: heightNum * 브러우저 창 높이
   for (let i = 0; i < sceneInfo.length; i++) {
     if (sceneInfo[i].type === 'sticky') {
       sceneInfo[i].scrollHeight = sceneInfo[i].heightNum * window.innerHeight;
     } else if (sceneInfo[i].type === 'normal') {
-      sceneInfo[i].scrollHeight = sceneInfo[i].objs.container.offsetHeight;
+      sceneInfo[i].scrollHeight = sceneInfo[i].objs.content.offsetHeight + window.innerHeight * 0.5;
     }
     sceneInfo[i].objs.container.style.height = `${sceneInfo[i].scrollHeight}px`;
   }
@@ -229,8 +242,8 @@ function playAnimation() {
 
   switch (currentScene) {
     case 0: 
-      let sequence = Math.round(calcValues(values.imageSequence, currentYOffset));
-      objs.context.drawImage(objs.videoImages[sequence], 0, 0);
+      // let sequence = Math.round(calcValues(values.imageSequence, currentYOffset));
+      // objs.context.drawImage(objs.videoImages[sequence], 0, 0);
       objs.canvas.style.opacity = calcValues(values.canvas_opacity, currentYOffset);
 
       if (scrollRatio <= 0.22) {
@@ -278,13 +291,15 @@ function playAnimation() {
     case 1: 
       break;
     case 2: 
-      let sequence2 = Math.round(calcValues(values.imageSequence, currentYOffset));
-      objs.context.drawImage(objs.videoImages[sequence2], 0, 0);
-
+      // let sequence2 = Math.round(calcValues(values.imageSequence, currentYOffset));
+      // objs.context.drawImage(objs.videoImages[sequence2], 0, 0);
+      
       // scrollRatio에 따른 비디오 시작, 끝 opacity설정
-      if(scrollRatio <= 0.5) {
+      if (scrollRatio <= 0.5) {
+        // in
         objs.canvas.style.opacity = calcValues(values.canvas_opacity_in, currentYOffset);
       } else {
+        // out
         objs.canvas.style.opacity = calcValues(values.canvas_opacity_out, currentYOffset);
       }
 
@@ -336,7 +351,7 @@ function playAnimation() {
           // 캔버스보다 브라우저 창이 홀쭉한 경우
           canvasScaleRatio = heightRatio;
         } else {
-          // 캔버스보다 브라우저 창이 납짝한 경우
+          // 캔버스보다 브라우저 창이 납작한 경우
           canvasScaleRatio = widthRatio;
         }
         
@@ -361,6 +376,7 @@ function playAnimation() {
         values.rect2X[0] = values.rect1X[0] + recalculatedInnerWidth - whiteRectWidth;
         values.rect2X[1] = values.rect2X[0] + whiteRectWidth;
 
+        // 좌우 흰색 박스 그리기
         objs.context.fillRect(
           parseInt(values.rect1X[0]), 
           0, 
@@ -393,7 +409,7 @@ function playAnimation() {
         // 캔버스보다 브라우저 창이 홀쭉한 경우
         canvasScaleRatio = heightRatio;
       } else {
-        // 캔버스보다 브라우저 창이 납짝한 경우
+        // 캔버스보다 브라우저 창이 납작한 경우
         canvasScaleRatio = widthRatio;
       }
       
@@ -475,8 +491,7 @@ function playAnimation() {
 
           // darwImage(그릴 이미지 객체 or 비디오 or 또다른 캔버스 , x좌표, y좌표, 그릴 크기 width, height)
           // drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight) => 아래부터 그리기 때문에 이걸 사용해야함
-          objs.context.drawImage
-          (
+          objs.context.drawImage(
             objs.images[1],
             0, objs.canvas.height - blendHeight, objs.canvas.width, blendHeight,    //소스이미지
             0, objs.canvas.height - blendHeight, objs.canvas.width, blendHeight     //실제 캔버스에 그리는 부분
@@ -509,7 +524,9 @@ function playAnimation() {
             
             objs.canvasCaption.style.opacity = calcValues(values.canvasCaption_opacity, currentYOffset);
             objs.canvasCaption.style.transform = `translate3d(0, ${calcValues(values.canvasCaption_translateY, currentYOffset)}%, 0)`;
-          }
+          } else {
+						objs.canvasCaption.style.opacity = values.canvasCaption_opacity[0];
+					}
         }
 
       break;
@@ -520,19 +537,29 @@ function playAnimation() {
 function scrollLoop() {
   enterNewScene = false;
   prevScrollHeight = 0;
-
+  
   for (let i = 0; i < currentScene; i++) {
     // prevScrollHeight = prevScrollHeight + sceneInfo[i].scrollHeight;
     prevScrollHeight += sceneInfo[i].scrollHeight;
   }
 
-  if (yOffset > prevScrollHeight + sceneInfo[currentScene].scrollHeight) {
+  if (delayedYOffset < prevScrollHeight + sceneInfo[currentScene].scrollHeight) {
+    document.body.classList.remove('scroll-effect-end');
+  }
+
+  if (delayedYOffset > prevScrollHeight + sceneInfo[currentScene].scrollHeight) {
     enterNewScene = true;
-    currentScene++;
+    if (currentScene === sceneInfo.length - 1) {
+      document.body.classList.add('scroll-effect-end');
+    }
+    
+    if (currentScene < sceneInfo.length - 1) {
+      currentScene++;
+    }
     document.body.setAttribute('id', `show-scene-${currentScene}`);
   }
 
-  if (yOffset < prevScrollHeight) {
+  if (delayedYOffset < prevScrollHeight) {
     enterNewScene = true;
     // currentSecne이 -값이 될 수 없기 때문에 (바운스 효과가 있을 시 currentScene이 0일 때 -값이 될 수 있음)
     if (currentScene === 0) return;
@@ -546,23 +573,141 @@ function scrollLoop() {
   playAnimation();
 }
 
-//창크기에 맞춰서 높이 변화
-window.addEventListener('scroll', () => {
-  yOffset = window.pageYOffset;
-  scrollLoop();
-});
+// loop함수는 계속 호출되서 무한루프 돌고 있음
+function loop() {
+  // C + (D - C) * 0.1 : 횟수가 반복될 수록 0에 수렴, 그렇기 때문에 부드럽게 애니메이션이 보인다.
+  // 현재 나의 위치 (C) = delayedYOffset
+  // 목표 위치 (D) = pageYOffset (=현재 스크롤 위치)
+  delayedYOffset = delayedYOffset + (yOffset - delayedYOffset) * acc; // 속도 감속 시킬때 자주 사용
+  
+ if (!enterNewScene) {
+  if (currentScene === 0 || currentScene === 2) {
+    const currentYOffset = delayedYOffset - prevScrollHeight;
+    const objs = sceneInfo[currentScene].objs;
+    const values = sceneInfo[currentScene].values;
+    let sequence = Math.round(calcValues(values.imageSequence, currentYOffset));
+
+    if (objs.videoImages[sequence]) {
+      objs.context.drawImage(objs.videoImages[sequence], 0, 0);
+    }
+  }
+ }
+
+         // 일부 기기에서 페이지 끝으로 고속 이동하면 body id가 제대로 인식 안되는 경우를 해결
+        // 페이지 맨 위로 갈 경우: scrollLoop와 첫 scene의 기본 캔버스 그리기 수행
+        if (delayedYOffset < 1) {
+            scrollLoop();
+            sceneInfo[0].objs.canvas.style.opacity = 1;
+            sceneInfo[0].objs.context.drawImage(sceneInfo[0].objs.videoImages[0], 0, 0);
+        }
+        // 페이지 맨 아래로 갈 경우: 마지막 섹션은 스크롤 계산으로 위치 및 크기를 결정해야할 요소들이 많아서 1픽셀을 움직여주는 것으로 해결
+        if ((document.body.offsetHeight - window.innerHeight) - delayedYOffset < 1) {
+            let tempYOffset = yOffset;
+            scrollTo(0, tempYOffset - 1);
+        }
+
+  rafId = requestAnimationFrame(loop);
+
+  // 거리간 차이만 판별하면 되므로 절대값으로 판별함
+  if (Math.abs(yOffset - delayedYOffset) < 1) {
+    cancelAnimationFrame(rafId);
+    rafState = false;
+  }
+}
+
+// ※ 로드함수의 경우, 이미지 모두를 다 로드해야 실행함 -> 로드되는 동안 기다림 발생 => 부분로딩이 필요 (main-imgload.js 참고)
+// load이벤트 대신에 DOMContentLoaded 이벤트 사용
+// DOMContentLoaded는 이미지와 같은 자원이 다 로드되지 않아도 html 구조(= DOM 구조)만 세팅이 되면 바로 실행되는 함수 / 실행되는 시간이 더 빠르다.
+// window.addEventListener('DOMContentLoaded', () => {
 
 // window.addEventListener('DOMContentLoaded', setLayout);도 아래와 같음
 // DOMContentLoaded와 load의 차이 : load는 웹페이지 리소스 이미지까지 다 로딩된 후에 실행 DOMContentLoaded는 DOM구조가 로드가 끝나면 바로 실행 그래서 DOMContentLoaded가 먼저 실행됨 보통 요걸 더 많이 씀
 // load시 발생하는 이벤트 함수를 익명함수를 넣어 setLayout을 호출함
 window.addEventListener('load', () => {
+
+  // debugger; // 개발자 도구에서 새로고침하면 여기서 브레이크가 걸림. 디버깅 할 수 있음
+
+  document.body.classList.remove('before-load');
   setLayout();
-// load할 때 첫번째 이미지만 보여주면 되기 때문에 videoImages의 0번째 배열을 호출함
+  // load할 때 첫번째 이미지만 보여주면 되기 때문에 videoImages의 0번째 배열을 호출함
   sceneInfo[0].objs.context.drawImage(sceneInfo[0].objs.videoImages[0], 0, 0);
   sceneInfo[2].objs.context.drawImage(sceneInfo[2].objs.videoImages[0], 0, 0);
+
+  // 새로고침했을때 이미지 캔버스 안뜨는거 해결하기 위해 스크롤 추가
+  // scrollTo(x, y)
+  // 왜 이방법은 안되지???? yOffset을 그대로 사용하면 안되남
+  // setTimeout(() => {
+  //   scrollTo(0, yOffset + 5);
+  // }, 1000);
+
+// 중간에서 새로고침 했을 경우 자동 스크롤로 제대로 그려주기
+  let tempYOffset = yOffset;
+  let tempScrollCount = 0;
+
+  // 맨 첫부분에서 새로고침할땐 스크롤 안하게 조건, 그리고 안전하게 그리기위해 setInterval로 몇번 반복해줌
+  if (tempYOffset > 0) {
+    let siId = setInterval(() => {
+      scrollTo(0, tempYOffset);
+      tempYOffset += 2;
+      console.log('tempYOffset', tempYOffset);
+  
+      if (tempScrollCount > 5) {
+        clearInterval(siId);
+      }
+      tempScrollCount++;
+    }, 20);
+  }
+
+  //창크기에 맞춰서 높이 변화
+  window.addEventListener('scroll', () => {
+    yOffset = window.pageYOffset;
+    scrollLoop();
+    checkMenu();
+
+    if (!rafState) {
+      rafId = requestAnimationFrame(loop);
+      rafState = true;
+    }
+  });
+
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 900) {
+      // setLayout();
+      // // rectStartY가 창사이즈가 바뀔때 적용이 안되서 문제 => 창사이즈가 바뀔때마다  rectStartY가 초기화 되야한다!
+      // sceneInfo[3].values.rectStartY = 0;
+      //위 코드처럼 실행할시 이미지 블렌드나 다른 부분에서 새로 고침을 하면 버그가 발생할 가능성이 많음
+      //그래서 아예 리로드를 해주기로 함
+
+    // 위의 코드 대신 창사이즈나 모바일 가로 세로가 바뀌면 리로드를 해준다.
+      window.location.reload();
+    } 
+  });
+
+  // 모바일 기기의 방향을 바꿀 때마다 일어나는 이벤트
+  window.addEventListener('orientationchange', () => {
+    scrollTo(0, 0);
+    // setTimeout(setLayout, 500);
+    // 창사이즈나 모바일 가로 세로가 바뀌면 리로드를 해준다.
+    setTimeout(() => {
+      window.location.reload();
+    }, 500);
+  });
+
+  // 화살표 함수 안에선 this를 사용할 수 없음.
+  // 화살표 함수 안에서의 this는 전역 객체를 가리킴
+  document.querySelector('.loading').addEventListener('transitionend', (e) => {
+    document.body.removeChild(e.currentTarget);
+  })
 });
-window.addEventListener('resize', setLayout);
+
 
 setCanvasImages();
 
 }) ();
+
+
+//  섹션 0에서 새로 고침을 하면 화면이 섹션 3으로 나오는 버그
+//    -> 0,2,3 섹션은 나중에 스크립트로 계산되는 높이를 사용하고 1섹션은 보통스크롤 영역이므로 원래 높이를 사용함
+//    -> 처음엔 모든 섹션이 자기 자신의 본래의 높이(default height)를 가지기 때문에 발생하는 문제! (setLayout 실행전 발생하는 문제)
+//    -> 계산의 오차가 발생함
+//    -> 처음에는 전부 눈에 안보이게 하면 문제가 발생하지 않음

@@ -9,7 +9,16 @@
 	<link rel="stylesheet" href="css/default.css">
 	<link rel="stylesheet" href="css/blank.css">
 </head>
-<body>
+<body class="before-load">
+	<div class="loading">
+		<!-- viewBox로 svg를 상대적으로 크기 조절을 할 수 있다 => 그래서 단위 잘 안씀 -->
+		<!-- 원을 그리는데 border가 아니라 svg를 쓴 이유는 동글동글 돌아가는 애니메이션을 추가하기 위해서다 -->
+		<svg class="loading-circle">
+			<!-- 위치(원의 중심위치)랑 반지름으로 크기를 정함 -->
+			<!-- 원의 둘레는 document.querySelector('.loading-circle circle').getTotalLength()로 가져올 수 있다 -->
+			<circle cx="50%" cy="50%" r="25"></circle>
+		</svg>
+	</div>
 	<div class="container">
 		<!-- 1. header -->
 		<nav class="global-nav">
@@ -93,6 +102,17 @@
 			<canvas class="image-blend-canvas" width="1920" height="1080"></canvas>
 			<p class="canvas-caption">
 				Lorem ipsum dolor sit amet consectetur adipisicing elit. Cumque optio sapiente suscipit, architecto fuga iure odit totam quo porro dolorem placeat tempore nesciunt officia sint labore autem perferendis, eveniet obcaecati, quasi voluptatum. Sunt dolor repudiandae eveniet temporibus architecto unde iusto ex dolore expedita illo, ducimus eos ullam ipsam, porro animi itaque! Autem cumque voluptas debitis adipisci alias necessitatibus quia placeat. Ipsum omnis reiciendis unde tenetur necessitatibus voluptatibus pariatur at architecto ducimus aperiam aliquid tempore aspernatur sint quam nobis, eos assumenda molestias adipisci incidunt praesentium possimus sed asperiores. Deleniti dolores voluptatibus blanditiis nam recusandae perferendis, modi incidunt, voluptas voluptates cupiditate necessitatibus architecto eos vel nesciunt mollitia quaerat odit praesentium magnam cumque at laudantium et harum possimus. Sunt illo possimus, libero a, odio incidunt ea tempora tenetur, iusto dolor fuga aliquid exercitationem vel? Quasi cum est esse molestiae eos at, vel veritatis necessitatibus accusantium facilis cupiditate commodi similique ab asperiores in quae?
+			</p>
+		</section>
+
+		<section class="normal-content">
+			<p class="mid-message">
+				Lorem ipsum dolor sit amet consectetur, adipisicing elit. Recusandae quisquam tempore consequatur, corrupti ut quo similique officia unde non dolore mollitia numquam. Aliquam dicta cumque rerum itaque earum mollitia quidem eum sit maiores possimus accusamus numquam, voluptatum inventore nulla ab quos et adipisci laboriosam consequatur aut tempora assumenda fugit voluptate non! Autem est eius quisquam harum voluptas consequatur aut soluta cumque accusamus nulla necessitatibus labore amet aperiam quasi veritatis, sit obcaecati alias magnam modi? Sint tenetur obcaecati hic, voluptate eaque minus facilis. Quis perspiciatis quasi voluptatum libero ad officia amet odit atque, minus, facere quod rem voluptates laboriosam accusantium aliquid!
+			</p>
+		</section>
+		<section class="normal-content">
+			<p class="mid-message">
+				Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum, vero quibusdam reprehenderit possimus cum necessitatibus nihil debitis tenetur nobis amet reiciendis impedit! Sunt id ullam nulla! Ut, ipsa minima ducimus illo, ratione quas reprehenderit recusandae mollitia odit adipisci corporis ad temporibus sunt placeat doloribus perspiciatis totam minus vero molestias voluptatum ipsam repudiandae dolore optio. Aliquid quia impedit pariatur dignissimos mollitia recusandae voluptatibus adipisci sint, doloribus tempora voluptates amet cum eum cupiditate officia eos sit quibusdam obcaecati soluta laborum vel autem quo! Voluptatem asperiores nesciunt velit. Ipsa officia assumenda quod ex illo voluptates repudiandae provident. Earum quo sint sit itaque ab et doloribus nisi maxime porro ex officiis cupiditate ut, dolore excepturi quos consequuntur suscipit necessitatibus cum ad voluptates eius vitae laborum. Aliquid, ducimus, nisi quos est tempore fugit accusamus voluptatibus necessitatibus amet ipsa dolor quam perferendis deleniti, praesentium iste temporibus nihil quis repudiandae! Voluptatibus nihil impedit nam ea cum neque.
 			</p>
 		</section>
 
